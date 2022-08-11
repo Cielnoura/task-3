@@ -13,7 +13,30 @@ margin: 0;
 width: 100vw;
     }
 
+<?php
 
+$conn = mysqli_connect("localhost", "root", '', "esp32");
+
+if (mysqli_connect_errno()) {
+    die('Unable to connect to database ' . mysqli_connect_error());
+}
+
+header("Access-Control-Allow-Origin: *");
+$qry = $conn->prepare("SELECT * FROM movement ORDER BY ID DESC LIMIT 1");
+
+$qry->execute();
+$qry->bind_result($id, $direction, $duration, $dateTime);
+
+
+while ($qry->fetch()) {
+    $temp = array();
+    $temp['ID'] = $id;
+   
+    $temp['Duration'] = $duration;
+    array_push($columns, $temp);
+}
+
+echo json_encode($columns);
 </style>
     <body>
 <br>
@@ -22,10 +45,7 @@ width: 100vw;
           </br>
               </br>
                 <?php
-                    $SERVER ="localhost";
-                    $username="root";
-                    $password="";
-                    $dbname="lena";
+                  
 
                     $conn=mysqli_connect($SERVER,$username,$password,$dbname);
                    if(empty($_GET['value']))
@@ -41,9 +61,6 @@ width: 100vw;
                    }
 
 
-
-                   $query= "insert into svalue values($value)" ;
-                   $run=mysqli_query($conn,$query)
 
 
                 ?>
